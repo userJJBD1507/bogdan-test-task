@@ -1,5 +1,3 @@
-package usa.bogdan.web;
-
 import lombok.Builder;
 import lombok.Data;
 import lombok.val;
@@ -19,7 +17,7 @@ public class DocumentManager {
     }
     public List<Document> search(SearchRequest request) {
         return storage.values().stream()
-                .filter(document -> matchesSearchRequest(document, request))
+                .filter(document -> coincide(document, request))
                 .collect(Collectors.toList());
     }
     public Document save(Document document) {
@@ -32,24 +30,24 @@ public class DocumentManager {
         storage.put(document.getId(), document);
         return document;
     }
-    private boolean matchesSearchRequest(Document document, SearchRequest request) {
+    private boolean coincide(Document document, SearchRequest request) {
         if (request.getTitlePrefixes() != null && !request.getTitlePrefixes().isEmpty()) {
-            boolean matchesTitlePrefix = request.getTitlePrefixes().stream()
+            boolean coincideTitlePrefix = request.getTitlePrefixes().stream()
                     .anyMatch(prefix -> document.getTitle().startsWith(prefix));
-            if (!matchesTitlePrefix) {
+            if (!coincideTitlePrefix) {
                 return false;
             }
         }
         if (request.getContainsContents() != null && !request.getContainsContents().isEmpty()) {
-            boolean matchesContent = request.getContainsContents().stream()
+            boolean coincideContent = request.getContainsContents().stream()
                     .anyMatch(content -> document.getContent().contains(content));
-            if (!matchesContent) {
+            if (!coincideContent) {
                 return false;
             }
         }
         if (request.getAuthorIds() != null && !request.getAuthorIds().isEmpty()) {
-            boolean matchesAuthor = request.getAuthorIds().contains(document.getAuthor().getId());
-            if (!matchesAuthor) {
+            boolean coincideAuthor = request.getAuthorIds().contains(document.getAuthor().getId());
+            if (!coincideAuthor) {
                 return false;
             }
         }
